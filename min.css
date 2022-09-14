@@ -70,6 +70,8 @@ button{
     outline: none;
     border: none;
     cursor: pointer;
+    
+    
 }
 .btn-comprar.btn-comprar:hover{
 background-color: green;
@@ -89,8 +91,22 @@ background-color: green;
 background-color: red;
 
 }
+.btn-borrar-fila {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    margin: 1rem 0;
+    border-radius:  10px;
+    outline: none;
+    border: none;
+    cursor: pointer;
+    background-color: red;
+}
+.btn-borrar-.btn-borrar-fila:hover{
+background-color: red;
+
+}
 .btn-compra {
-    color: green;
+  background-color: green;
     display: inline-block;
     padding: 0.5rem 1rem;
     margin: 1rem 0;

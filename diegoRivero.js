@@ -1,4 +1,4 @@
-let usuarios_registrados = [
+/*let usuarios_registrados = [
     {nombre: "Juana" , apellido: "Perez" , doc_id: 13382450 , direccion: "Fernandez Crespo 2154"},
     {nombre: "Diego" , apellido: "Rivero" , doc_id: 45579872 , direccion: "Yatay 1428"},
     {nombre: "Ignacio" , apellido: "Caballero" , doc_id: 43214560 , direccion: "Enrique Brito 987"},
@@ -8,6 +8,8 @@ let usuarios_registrados = [
     {nombre: "Felipe" , apellido: "Peluffo" , doc_id: 54789638 , direccion: "Cañas 12"},
     
 ]
+*/
+
 const form_registro = document.getElementById("registrarse");
 const registro_nombre = document.getElementById("nombre");
 const registro_apellido = document.getElementById("apellido");
@@ -42,7 +44,7 @@ form_registro.addEventListener("click", (e) => {
     let new_user = new Usuario(registro_nombre.value, registro_apellido.value, registro_doc_id.value , registro_direccion.value, registro_pass.value );
         
     registro_usuario.push(new_user);
-    console.log(registro_usuario);  
+    //console.log(registro_usuario);  
     alerta_registro.innerHTML = `<p> Bienvenido ${registro_nombre.value} , su usuario es ${doc_id.value}</p>`;
     
     }else{
@@ -68,6 +70,11 @@ form_login.addEventListener("submit", (e) => {
         }
     }
 })
+
+/*let nombre_usuario = document.getElementById("nombre_usuario");
+let user = localStorage.getItem("usuario");
+nombre_usuario.innerText = user;*/
+
 const productos = [
     { id: 1, name : "Camiseta Principal", precio: 3500, img : 'imagenes/camiseta1-3.png', cantidad: 1 },
     { id: 2, name : "Camiseta Alternativa", precio: 3250, img : 'imagenes/camiseta2-3.png', cantidad: 1},
@@ -79,17 +86,9 @@ const productos = [
     { id: 8, name : "Camiseta Blanca", precio: 3250, img : 'imagenes/camiseta 4-2.png', cantidad: 1},
 ]
 
-let talles = [
-    {id:1 , name: "S"},
-    {id:2 , name: "M"},
-    {id:3 , name: "L"},
-    {id:4 , name: "XL"}
-  
-
-]
+let talles = ["S", "M", "L", "XL"]
 
 const contenedor_productos = document.querySelector(".contenedor-compra");
-//const contenedor_pedidos = document.querySelector(".listado-pedido")
 let tabla = document.getElementById("tbody");
 let tabla_total = document.getElementById("tbody2");
 let orden_pedido = [];
@@ -107,19 +106,24 @@ function mostrar_productos(){
         const titulo_producto = document.createElement("h2");
         titulo_producto.textContent = producto.name;
         titulo_producto.classList.add("titulo-producto");
-
+        const talle_producto = document.createElement("select");
+        talle_producto.innerHTML = `<td><select onchange="cambio_talle();" class="seleccion-talle" name="talle"><option value="TALLE" selected>Talle</option><option value="S" >${talles[0]}</option><option value="M" >${talles[1]}</option><option value="L" >${talles[2]}</option><option value="XL">${talles[3]}</option></select></td>`
+        
         const precio_producto = document.createElement("h3");
-        precio_producto.textContent = producto.precio
+        precio_producto.innerHTML = `<h3> $ ${producto.precio}`
 
         const btn_compra = document.createElement("button");
         btn_compra.textContent = "Agregar al pedido";
         btn_compra.classList.add("btn-comprar");
         btn_compra.addEventListener("click", function(){
         agregar_carrito(producto.id);
+       
         })
-        
+       
+       
         div_productos.appendChild(imagen_producto);
         div_productos.appendChild(titulo_producto);
+        div_productos.appendChild(talle_producto);
         div_productos.appendChild(precio_producto);
         div_productos.appendChild(btn_compra);
 
@@ -127,11 +131,27 @@ function mostrar_productos(){
         
     });
 }
+function cambio_talle(){
+    let talle_seleccion = document.getElementsByClassName(".seleccion-talle");
+    console.log(talle_seleccion);
+ 
+}
 
+function ver_carrito(){
+    let carrito = document.getElementById("carrito");
+    if(carrito.style.display != "none"){
+        carrito.style.display != "none"
+    }else{
+        carrito.style.display != "flex"
+    }
+
+}
 
 document.addEventListener("DOMContentLoaded", function() {
 
     mostrar_productos();
+    ver_pedido();
+  
 }) 
 
 
@@ -141,12 +161,51 @@ function agregar_carrito(id){
    const compra_productos = productos.find( (producto) => {
    return producto.id === id
    });
+
    orden_pedido.push(compra_productos);
-   const carrito_JSON = JSON.stringify(orden_pedido);
+   const carrito_JSON = JSON.stringify(orden_pedido) ;
    localStorage.setItem("carrito" , carrito_JSON);
-   let temp_carrito = JSON.parse(localStorage.getItem("carrito"));
-   
-   ver_pedido();
+
+
+   const fila_carrito = document.createElement("tr");
+   fila_carrito.innerHTML += `<td><img class="imagen-productos" src="${compra_productos.img}"></img></td>
+                              <td>${compra_productos.name}</td>
+                              <td>${compra_productos.cantidad}</td>
+                              <td><select onchange="cambio_talle();" id = "seleccion-talle" name="talle"><option value="value0" selected>Talle</option><option value="value1" >${talles[0]}</option><option value="value2" >${talles[1]}</option><option value="value#" >${talles[2]}</option><option value="value4">${talles[3]}</option></select></td>
+                              <td> $ ${compra_productos.precio}</td>
+                              <td><button class="btn-borrar">Borrar</button></td>`;
+
+        
+        
+    tabla.append(fila_carrito);
+
+        let total_precio_compra = orden_pedido.reduce((acumulador, objeto) => {
+            return acumulador + objeto.precio; }, 0) ;
+
+        let total_JSON = JSON.stringify(total_precio_compra);
+        localStorage.setItem("a_pagar", total_JSON);
+        let a_pagar = JSON.parse(localStorage.getItem("a_pagar"));
+        
+        tabla_total.innerHTML="";
+
+        let fila_total = document.createElement("tr");
+        fila_total.innerHTML += `<td>TOTAL COMPRA :  $           ${a_pagar}</td>
+                                 <button id = "btn-fin"class="btn-comprar">Comprar</button>`;
+
+        
+        
+        tabla_total.append(fila_total);                 
+
+
+        const btn_borra_fila = document.querySelectorAll(".btn-borrar");
+        //console.log(btn_borra_fila.target);
+        for (let boton of btn_borra_fila){
+            boton.addEventListener("click", borrar_fila)
+            
+        }
+
+        let btn_final = document.getElementById("btn-fin")
+        btn_final.addEventListener("click", compra_final)
 }
 
 
@@ -154,72 +213,65 @@ function agregar_carrito(id){
 function ver_pedido(){
 
   
-   let orden_pedido = JSON.parse(localStorage.getItem("carrito"));
-   
-    console.log(orden_pedido);
-   
+    orden_pedido = JSON.parse(localStorage.getItem("carrito")) || [];
+    total_a_pagar = JSON.parse(localStorage.getItem("a_pagar") )|| [];
     tabla.innerHTML="";
-
+    
     orden_pedido.forEach((producto)=>{
         const fila_carrito = document.createElement("tr");
         fila_carrito.innerHTML += `<td><img class="imagen-productos" src="${producto.img}"></img></td>
-                                   <td>${producto.name}</td>
-                                   <td>${producto.cantidad}</td>
-                                   <td>talle</td>
-                                   <td> $ ${producto.precio}</td>
-                                   <td><button class="btn-borrar">Borrar</button></td>`;
+                               <td>${producto.name}</td>
+                               <td>${producto.cantidad}</td>
+                               <td><select name="talle"><option value="value0" selected>Talle</option><option value="value1" >${talles[0]}</option><option value="value2" >${talles[1]}</option><option value="value#" >${talles[2]}</option><option value="value4">${talles[3]}</option></select></td>
+                               <td> $ ${producto.precio}</td>
+                               <td><button class="btn-borrar-fila">Borrar</button></td>`;
+
+    
+    
+        tabla.append(fila_carrito);      
+        
+        tabla_total.innerHTML="";
+        let filas_total = document.createElement("tr");
+        filas_total.innerHTML = `<td>TOTAL COMPRA :  $           ${total_a_pagar}</td>
+                                 <button id = "btn-fin"class="btn-comprar">Comprar</button>`;
 
         
         
-        tabla.append(fila_carrito);       
+        tabla_total.append(filas_total);          
+        let btn_fin = document.getElementById("btn-fin")
+        btn_fin.addEventListener("click", compra_final)
         
-        const btn_borra_fila = document.querySelectorAll(".btn-borrar");
-        console.log(btn_borra_fila);
+        const btn_borra_fila = document.querySelectorAll(".btn-borrar-fila");
+        //console.log(btn_borra_fila);
         for (let boton of btn_borra_fila){
             boton.addEventListener("click", borrar_fila)
         }
-
-        total_precio_compra ()
+        
     })
 }
+
 function borrar_fila(e){
     let abuelo = e.target.parentNode.parentNode;
     abuelo.remove();
     
-}
-
-function total_precio_compra (){
-
-        let recuperar_carritos = JSON.parse(localStorage.getItem("carrito"));
-        console.log(recuperar_carritos);
-       
-        tabla_total.innerHTML="";
-    
-        recuperar_carritos.forEach((producto)=>{
-    
-        const total_precio_compra = recuperar_carritos.reduce((acumulador, objeto) => {
-        return acumulador + objeto.precio; }, 0) ;
-
-        console.log(total_precio_compra);
-
-        const fila_total = document.createElement("tr");
-        fila_total.innerHTML = `<td>TOTAL COMPRA :  $           ${total_precio_compra}</td>
-                                <button id = "btn-fin"class="btn-comprar">Comprar</button>`;
-
         
-        
-        tabla_total.append(fila_total);           
-        let btn_fin = document.getElementById("btn-fin")
-        btn_fin.addEventListener("click", compra_final)
-        })
-    
-    
-}
+    }
+
+
 
 function compra_final(e){
-       
-    localStorage.clear();
+    total_a_pagar = JSON.parse(localStorage.getItem("a_pagar") )|| [];   
+    
     tabla.innerHTML ="";
     tabla_total.innerHTML ="";
-    
+    let mensaje_final = document.createElement("tr");
+        mensaje_final.innerHTML = `<td>GRACIAS POR SU COMPRA :  $           ${total_a_pagar}</td>
+                                   <button onclick="location.reload()"class="btn-borrar">CONTINUAR</button>`;
+
+        
+        
+        tabla_total.append(mensaje_final);
+        localStorage.clear();
 }
+
+
