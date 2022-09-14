@@ -107,7 +107,7 @@ function mostrar_productos(){
         titulo_producto.textContent = producto.name;
         titulo_producto.classList.add("titulo-producto");
         const talle_producto = document.createElement("select");
-        talle_producto.innerHTML = `<td><select onchange="cambio_talle();" class="seleccion-talle" name="talle"><option value="TALLE" selected>Talle</option><option value="S" >${talles[0]}</option><option value="M" >${talles[1]}</option><option value="L" >${talles[2]}</option><option value="XL">${talles[3]}</option></select></td>`
+        talle_producto.innerHTML = `<td><select onchange="cambio_talle();" id="seleccion-talle" name="talle"><option value="TALLE" selected>Talle</option><option value="S" >${talles[0]}</option><option value="M" >${talles[1]}</option><option value="L" >${talles[2]}</option><option value="XL">${talles[3]}</option></select></td>`
         
         const precio_producto = document.createElement("h3");
         precio_producto.innerHTML = `<h3> $ ${producto.precio}`
@@ -132,11 +132,12 @@ function mostrar_productos(){
     });
 }
 function cambio_talle(){
-    let talle_seleccion = document.getElementsByClassName(".seleccion-talle");
+    let talle_seleccion = document.getElementById("seleccion-talle");
+    
     console.log(talle_seleccion);
  
 }
-
+document.addEventListener("change", cambio_talle)
 function ver_carrito(){
     let carrito = document.getElementById("carrito");
     if(carrito.style.display != "none"){
